@@ -1,0 +1,69 @@
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Scanner;
+import java.util.Base64;
+
+public class HMACAuthentication {
+
+    // Generate HMAC using SHA-256
+    public static String generateHMAC(String message, String secretKey)
+            throws Exception {
+
+        Mac mac = Mac.getInstance("HmacSHA256");
+
+        SecretKeySpec keySpec = new SecretKeySpec(
+                secretKey.getBytes("UTF-8"), "HmacSHA256");
+
+        mac.init(keySpec);
+
+        byte[] hmacBytes = mac.doFinal(message.getBytes("UTF-8"));
+
+        return Base64.getEncoder().encodeToString(hmacBytes);
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("SECURE MESSAGE AUTHENTICATION USING HMAC");
+
+        System.out.print("Enter the secret key: ");
+        String secretKey = sc.nextLine();
+
+        System.out.print("Enter the message: ");
+        String message = sc.nextLine();
+
+        // Generate authentication code
+        String hmac = generateHMAC(message, secretKey);
+
+        System.out.println("\nOriginal Message: " + message);
+        System.out.println("Generated HMAC: " + hmac);
+
+        // Verify the message
+        System.out.print("\nEnter the received message: ");
+        String receivedMessage = sc.nextLine();
+
+        System.out.print("Enter the received HMAC: ");
+        String receivedHMAC = sc.nextLine();
+
+        String expectedHMAC = generateHMAC(
+                receivedMessage, secretKey);
+
+        // Verify using constant-time comparison
+        boolean authenticated = java.security.MessageDigest
+                .isEqual(
+                    expectedHMAC.getBytes("UTF-8"),
+                    receivedHMAC.getBytes("UTF-8"));
+
+        if (authenticated) {
+            System.out.println(
+                "Authentication Successful! Message is authentic.");
+        } else {
+            System.out.println(
+                "Authentication Failed! Message may be modified.");
+        }
+
+        sc.close();
+    }
+}
