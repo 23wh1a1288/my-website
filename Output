@@ -1,0 +1,11 @@
+SECURE MESSAGE AUTHENTICATION USING HMAC
+Enter the secret key: secret123
+Enter the message: Hello World
+
+Original Message: Hello World
+Generated HMAC: [generated Base64 HMAC]
+
+Enter the received message: Hello World
+Enter the received HMAC: [paste the generated HMAC]
+
+Authentication Successful! Message is authentic.
